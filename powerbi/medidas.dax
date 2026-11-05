@@ -1,0 +1,47 @@
+-- Crear cada medida por separado en Power BI. Las primeras cinco usan los CSV generados.
+Observaciones = COUNT(HechosObservaciones[IdObservacion])
+
+Participaciones = SUM(HechosObservaciones[VecesManoLevantada])
+
+Promedio recursos visitados = AVERAGE(HechosObservaciones[RecursosVisitados])
+
+Observaciones rendimiento bajo =
+COALESCE(
+    CALCULATE(
+        [Observaciones],
+        KEEPFILTERS(HechosObservaciones[CategoriaRendimiento] = "L")
+    ),
+    0
+)
+
+Porcentaje rendimiento bajo =
+DIVIDE([Observaciones rendimiento bajo], [Observaciones])
+
+-- Las siguientes medidas requieren las tablas externas descritas en MODELO_Y_EDA.md.
+-- No equivalen a las métricas anteriores ni se pueden calcular con xAPI-Edu-Data.
+Promedio de notas = AVERAGE(HechosNotas[NotaNumerica])
+
+Notas registradas = COUNT(HechosNotas[NotaNumerica])
+
+Estudiantes elegibles deserción =
+CALCULATE(
+    DISTINCTCOUNT(HechosMatriculas[IdEstudiante]),
+    HechosMatriculas[ElegibleParaDesercion] = TRUE()
+)
+
+Estudiantes desertores =
+CALCULATE(
+    DISTINCTCOUNT(HechosMatriculas[IdEstudiante]),
+    HechosMatriculas[ElegibleParaDesercion] = TRUE(),
+    HechosMatriculas[IndicadorDesercion] = TRUE()
+)
+
+Tasa de deserción =
+-- Evita mezclar cohortes de periodos distintos con DISTINCTCOUNT.
+IF(
+    HASONEVALUE(DimensionPeriodos[IdPeriodo]),
+    DIVIDE(
+        COALESCE([Estudiantes desertores], 0),
+        [Estudiantes elegibles deserción]
+    )
+)

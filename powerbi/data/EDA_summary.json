@@ -1,0 +1,30 @@
+{
+  "source_rows": 480,
+  "output_observations": 480,
+  "exact_duplicate_source_rows_preserved": 2,
+  "missing_cells": 0,
+  "topic_count": 12,
+  "semester_counts": {
+    "F": 245,
+    "S": 235
+  },
+  "performance_class_counts": {
+    "H": 142,
+    "L": 127,
+    "M": 211
+  },
+  "overall_low_class_rate": 0.264583,
+  "mean_activity": {
+    "RaisedHands": 46.775,
+    "VisitedResources": 54.7979,
+    "AnnouncementsViewed": 37.9188,
+    "DiscussionParticipation": 43.2833
+  },
+  "unavailable_for_requirements": [
+    "numeric_grade",
+    "student_id",
+    "faculty",
+    "enrollment_status",
+    "academic_year"
+  ]
+}
