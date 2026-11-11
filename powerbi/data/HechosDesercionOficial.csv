@@ -1,0 +1,11 @@
+﻿CodigoFacultad,FacultadPublicada,CohorteIngreso,PeriodoSeguimiento,MatriculadosIniciales,MatriculadosSeguimiento,ReservasCupo,Graduados,GraduadosMatriculados,DesertoresNetos,PorcentajeDesercionPublicado,TransferenciasSalida,TransferenciasEntrada,Institucion,Sede,Metodologia,IdentificadorFuente,PaginaArchivoFuente,PaginaImpresaFuente,TablaFuente
+MED-01,Arquitectura,2005-2,2010-1,116,82,3,8,5,28,24.100000,5,5,Universidad Nacional de Colombia,Medellín,"Desercion neta por cohorte, boletin institucional 2010",desercion_2010,26,25,12
+MED-02,Ciencias,2005-2,2010-1,146,45,1,4,4,100,68.500000,10,1,Universidad Nacional de Colombia,Medellín,"Desercion neta por cohorte, boletin institucional 2010",desercion_2010,26,25,12
+MED-03,Ciencias Agropecuarias,2005-2,2010-1,221,67,3,1,1,151,68.300000,10,6,Universidad Nacional de Colombia,Medellín,"Desercion neta por cohorte, boletin institucional 2010",desercion_2010,26,25,12
+MED-04,Ciencias Humanas y E.,2005-2,2010-1,135,53,5,16,3,64,47.400000,1,3,Universidad Nacional de Colombia,Medellín,"Desercion neta por cohorte, boletin institucional 2010",desercion_2010,26,25,12
+MED-05,Minas,2005-2,2010-1,677,344,14,19,10,310,45.800000,21,32,Universidad Nacional de Colombia,Medellín,"Desercion neta por cohorte, boletin institucional 2010",desercion_2010,26,25,12
+MED-01,Arquitectura,2006-1,2010-2,117,79,2,17,16,35,29.900000,0,2,Universidad Nacional de Colombia,Medellín,"Desercion neta por cohorte, boletin institucional 2010",desercion_2010,27,26,13
+MED-02,Ciencias,2006-1,2010-2,160,59,3,11,8,95,59.400000,9,2,Universidad Nacional de Colombia,Medellín,"Desercion neta por cohorte, boletin institucional 2010",desercion_2010,27,26,13
+MED-03,Ciencias Agropecuarias,2006-1,2010-2,235,88,4,0,0,143,60.900000,4,2,Universidad Nacional de Colombia,Medellín,"Desercion neta por cohorte, boletin institucional 2010",desercion_2010,27,26,13
+MED-04,Ciencias Humanas y E.,2006-1,2010-2,137,57,6,26,18,66,48.200000,3,2,Universidad Nacional de Colombia,Medellín,"Desercion neta por cohorte, boletin institucional 2010",desercion_2010,27,26,13
+MED-05,Minas,2006-1,2010-2,755,485,20,35,32,247,32.700000,35,43,Universidad Nacional de Colombia,Medellín,"Desercion neta por cohorte, boletin institucional 2010",desercion_2010,27,26,13

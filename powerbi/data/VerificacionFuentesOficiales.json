@@ -1,0 +1,61 @@
+{
+  "filas_notas": 1977,
+  "asignaturas_distintas": 1255,
+  "periodos_notas": [
+    "2015-2",
+    "2017-1"
+  ],
+  "promedios_cero_pendientes_de_validacion": 63,
+  "filas_desercion_facultad_cohorte": 10,
+  "cohortes_verificadas": [
+    {
+      "cohorte": "2005-2",
+      "corte": "2010-1",
+      "matriculados_iniciales": 1295,
+      "desertores": 653,
+      "tasa_calculada": 0.5042471042471043
+    },
+    {
+      "cohorte": "2006-1",
+      "corte": "2010-2",
+      "matriculados_iniciales": 1404,
+      "desertores": 586,
+      "tasa_calculada": 0.41737891737891736
+    }
+  ],
+  "totales_notas": [
+    {
+      "PeriodoAcademico": "2015-2",
+      "Inscritos": 49607,
+      "Aprobados": 41499,
+      "Reprobados": 8108
+    },
+    {
+      "PeriodoAcademico": "2017-1",
+      "Inscritos": 49006,
+      "Aprobados": 41524,
+      "Reprobados": 7482
+    }
+  ],
+  "fuentes": [
+    {
+      "IdentificadorFuente": "notas_2015_2",
+      "ArchivoFuente": "InfRa2015-2.pdf",
+      "DireccionFuente": "https://planeacion.medellin.unal.edu.co/images/01%20Contenido%20Articulos/Estadisticas/Rendimiento%20Academico/InfRa2015-2.pdf",
+      "HuellaSHA256": "9dca98544e957c81488d2488f518f3f4394c6b58e7a83dda0d2b7cb497f14f33"
+    },
+    {
+      "IdentificadorFuente": "notas_2017_1",
+      "ArchivoFuente": "InfRa2017-1.pdf",
+      "DireccionFuente": "https://planeacion.medellin.unal.edu.co/images/01%20Contenido%20Articulos/Estadisticas/Rendimiento%20Academico/InfRa2017-1.pdf",
+      "HuellaSHA256": "dc4f72bcd4aae529bb973c41dcf4667c9d899e99eadbabdcd2ba1a70ce6cd21e"
+    },
+    {
+      "IdentificadorFuente": "desercion_2010",
+      "ArchivoFuente": "Boletin2010.pdf",
+      "DireccionFuente": "https://planeacion.medellin.unal.edu.co/images/01%20Contenido%20Articulos/Estadisticas/Boletines/boletin2010.pdf",
+      "HuellaSHA256": "f616f3e45c482a0169f5f4bbfa0a5383a929031ebe70b59b082370179a3a515f"
+    }
+  ],
+  "alcance": "Estadisticas historicas agregadas de UNAL Medellin; sin enlace individual con xAPI. No son microdatos ni indicadores actuales."
+}

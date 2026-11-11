@@ -1,30 +1,73 @@
 # Rendimiento-Universidades
 
-Proyecto Final - Herramientas Computacionales. Preparación de datos y modelo para Power BI.
+Proyecto final de Herramientas Computacionales: ETL, modelo de datos, EDA y
+medidas DAX para Power BI.
 
-1. Ejecutar `python etl/prepare_xapi.py` (requiere `pandas`).
-2. Importar los tres CSV `HechosObservaciones.csv`, `DimensionTemas.csv` y `DimensionSemestres.csv` de `powerbi/data/` en Power BI.
-3. Crear las relaciones y medidas según [MODELO_Y_EDA.md](powerbi/MODELO_Y_EDA.md).
+El proyecto conserva el análisis exploratorio de xAPI-Edu-Data y añade un
+complemento oficial de la Universidad Nacional de Colombia, sede Medellín. Las
+dos familias de datos se mantienen separadas porque describen poblaciones,
+periodos y niveles de detalle distintos.
 
-**Límite de la fuente:** el dataset xAPI disponible no contiene notas numéricas, facultades ni seguimiento de matrículas. Por ello los requerimientos de promedio de notas y tasa de deserción necesitan datos adicionales. La documentación especifica los campos y las medidas para incorporarlos sin confundir la categoría `L/M/H` con una nota o una deserción.
+## Estado de los requerimientos
 
-## Pendiente: requerimientos analíticos 1 y 2
+1. **ETL, modelo y EDA:** implementados para xAPI y para las fuentes oficiales.
+2. **Promedio de notas por materia y semestre:** preparado con 1.977 registros
+   oficiales de asignatura-periodo, correspondientes a 2015-2 y 2017-1.
+3. **Deserción por facultad:** preparada con cinco facultades y dos cohortes
+   institucionales, 2005-2 y 2006-1, observadas diez semestres después.
+4. **DAX:** se incluyen medidas con COUNT, SUM, AVERAGE y CALCULATE para xAPI,
+   y medidas de promedio publicado y tasa de deserción para el complemento.
 
-Los dos requerimientos asignados siguen pendientes de resolución por falta de datos en la fuente actual:
+La preparación de datos está terminada y verificada. Falta cargar las tablas y
+medidas oficiales en el archivo de Power BI existente y construir las dos
+páginas indicadas en [FUENTES_OFICIALES.md](powerbi/FUENTES_OFICIALES.md).
 
-| Requerimiento | Datos disponibles | Datos faltantes y trabajo pendiente |
-|---|---|---|
-| **1. Promedio de notas por materia y semestre** | Tema, semestre y categoría de rendimiento `L/M/H`. | Obtener notas numéricas individuales con su materia y periodo académico; validar la escala y el grano de los registros; calcular el promedio y visualizarlo por materia y semestre. |
-| **2. Tasa de deserción por facultad** | Categoría de ausencias y categoría de rendimiento. | Obtener identificador de estudiante, facultad, periodos e historial de matrícula y estados académicos; acordar la definición de deserción y su denominador; calcular la tasa por facultad con seguimiento suficiente. |
+## Reproducir el ETL
 
-Las categorías `L/M/H` corresponden a intervalos de notas, pero no permiten recuperar las notas exactas. Las ausencias y el rendimiento bajo tampoco demuestran deserción. No se deben asignar notas inventadas ni presentar el porcentaje de rendimiento bajo como tasa de deserción.
+Instalar dependencias y generar todos los CSV:
 
-### Próximo paso
+~~~powershell
+python -m pip install -r requirements.txt
+python etl/prepare_xapi.py
+python etl/preparar_fuentes_oficiales.py
+~~~
 
-Consultar con el profesor si se autoriza **complementar o cambiar el dataset** para obtener los campos faltantes, o **adaptar los requerimientos** a las variables disponibles. Esta decisión aún está pendiente; no hay una adaptación aprobada.
+Para volver a descargar los tres PDF desde los sitios oficiales:
 
-Una vez acordada la alternativa, actualizar el ETL y el modelo, implementar los indicadores correspondientes y validar sus resultados en Power BI. Las medidas de notas y deserción incluidas en `powerbi/medidas.dax` son plantillas que requieren tablas adicionales; no constituyen resultados calculados con el CSV actual.
+~~~powershell
+python etl/preparar_fuentes_oficiales.py --descargar
+~~~
 
-### Trabajo que ya sirve como avance
+Los resultados se escriben en powerbi/data. Las consultas M listas para copiar
+en Power Query están en [consultas_oficiales](powerbi/consultas_oficiales/) y
+las medidas están en [medidas.dax](powerbi/medidas.dax) y
+[medidas_oficiales.dax](powerbi/medidas_oficiales.dax).
 
-El ETL, el modelo por tema y semestre y la exploración básica permiten analizar las 480 observaciones. Las medidas implementadas con `COUNT`, `SUM`, `AVERAGE` y `CALCULATE` describen cantidad de registros, actividad y rendimiento categórico. Este avance respalda la exploración y el uso de DAX, pero **no completa los requerimientos 1 y 2**.
+## Fuentes oficiales seleccionadas
+
+- [Rendimiento académico UNAL Medellín 2015-2](https://planeacion.medellin.unal.edu.co/images/01%20Contenido%20Articulos/Estadisticas/Rendimiento%20Academico/InfRa2015-2.pdf)
+- [Rendimiento académico UNAL Medellín 2017-1](https://planeacion.medellin.unal.edu.co/images/01%20Contenido%20Articulos/Estadisticas/Rendimiento%20Academico/InfRa2017-1.pdf)
+- [Boletín estadístico UNAL Medellín 2010](https://planeacion.medellin.unal.edu.co/images/01%20Contenido%20Articulos/Estadisticas/Boletines/boletin2010.pdf)
+
+Esta combinación es la más adecuada porque los informes de notas publican
+promedio, inscritos, aprobados y reprobados por asignatura y periodo, mientras
+el boletín publica matriculados iniciales, rezago, graduados y desertores netos
+por facultad y cohorte. SNIES/SPADIES es una fuente oficial pertinente para
+permanencia, pero sus bases públicas no resuelven el promedio de notas por
+asignatura.
+
+## Límites de interpretación
+
+Los datos oficiales son históricos y agregados. No se pueden unir alumno por
+alumno con las 480 observaciones de xAPI, ni sirven para atribuir causalidad
+entre rendimiento y deserción. Los 63 promedios publicados como 0,00 quedan
+marcados para revisión del tipo de calificación y se excluyen del campo usado
+para análisis; el valor original permanece intacto.
+
+La medida de notas muestra el promedio que publicó la universidad en cada
+asignatura-periodo. No calcula un promedio global de promedios. La deserción
+usa la definición neta por cohorte del boletín de 2010, no la metodología anual
+vigente de SPADIES.
+
+Más detalle sobre el modelo, las relaciones, los controles y los valores de
+comprobación está en [FUENTES_OFICIALES.md](powerbi/FUENTES_OFICIALES.md).

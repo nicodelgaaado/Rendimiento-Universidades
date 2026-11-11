@@ -1,0 +1,41 @@
+-- Crear cada medida por separado. Requieren las tablas oficiales, no xAPI.
+-- Promedio publicado a nivel asignatura-periodo; totales vacios intencionalmente.
+Promedio de notas oficial =
+IF(
+    COUNTROWS(HechosNotasOficiales) = 1,
+    MAX(HechosNotasOficiales[PromedioNotaParaAnalisis])
+)
+
+Registros de asignatura oficiales = COUNTROWS(HechosNotasOficiales)
+
+Inscripciones en asignaturas oficiales = SUM(HechosNotasOficiales[Inscritos])
+
+Registros de notas por revisar =
+COALESCE(
+    CALCULATE(
+        [Registros de asignatura oficiales],
+        KEEPFILTERS(HechosNotasOficiales[PromedioNotaPublicado] = 0)
+    ),
+    0
+)
+
+Matriculados iniciales cohorte = SUM(HechosDesercionOficial[MatriculadosIniciales])
+
+Desertores netos cohorte = SUM(HechosDesercionOficial[DesertoresNetos])
+
+Tasa de deserción por facultad =
+-- Seleccionar una cohorte evita mezclar sus distintos cortes de seguimiento.
+IF(
+    HASONEVALUE(DimensionCohortesDesercion[CohorteIngreso]),
+    DIVIDE([Desertores netos cohorte], [Matriculados iniciales cohorte])
+)
+
+-- Control: en cada fila de facultad/cohorte debe ser exactamente cero.
+Diferencia control desertores =
+[Desertores netos cohorte] - (
+    [Matriculados iniciales cohorte]
+    - SUM(HechosDesercionOficial[MatriculadosSeguimiento])
+    - SUM(HechosDesercionOficial[ReservasCupo])
+    - SUM(HechosDesercionOficial[Graduados])
+    + SUM(HechosDesercionOficial[GraduadosMatriculados])
+)
