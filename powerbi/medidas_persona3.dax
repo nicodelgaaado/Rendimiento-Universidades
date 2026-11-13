@@ -1,0 +1,205 @@
+-- Persona 3: requerimientos 6, 7 y 8.
+-- Modelo usado: tablas exportadas actuales, con encabezados en español.
+-- Crear las medidas en Power BI y asignarles Display folder = P3.
+-- Las siguientes dos expresiones son columnas calculadas, no medidas.
+
+-- Índice de actividad equiponderado por observación (cada variable va de 0 a 100).
+-- Es un índice descriptivo propuesto, no una variable original del conjunto.
+HechosObservaciones[P3_Actividad_Observacion] =
+    DIVIDE(
+        HechosObservaciones[VecesManoLevantada]
+            + HechosObservaciones[RecursosVisitados]
+            + HechosObservaciones[AnunciosVistos]
+            + HechosObservaciones[ParticipacionesDiscusion],
+        4
+    )
+
+-- Codificación ordinal auxiliar para la correlación exploratoria con Class.
+-- No es una nota numérica: presupone distancias iguales entre L, M y H.
+HechosObservaciones[P3_Codigo_Class] =
+    SWITCH(
+        HechosObservaciones[CategoriaRendimiento],
+        "L", 1,
+        "M", 2,
+        "H", 3,
+        BLANK()
+    )
+
+-- Clasificación de temas usando SEARCH, que no distingue mayúsculas/minúsculas.
+DimensionTemas[P3_GrupoTema_SEARCH] =
+    VAR TemaActual = DimensionTemas[Tema]
+    RETURN
+        SWITCH(
+            TRUE(),
+            SEARCH("Science", TemaActual, 1, 0) > 0
+                || SEARCH("Biology", TemaActual, 1, 0) > 0
+                || SEARCH("Chemistry", TemaActual, 1, 0) > 0
+                || SEARCH("Geology", TemaActual, 1, 0) > 0, "Ciencias",
+            SEARCH("Arabic", TemaActual, 1, 0) > 0
+                || SEARCH("English", TemaActual, 1, 0) > 0
+                || SEARCH("French", TemaActual, 1, 0) > 0
+                || SEARCH("Spanish", TemaActual, 1, 0) > 0, "Idiomas",
+            "Otros"
+        )
+
+-- Misma agrupación con FIND, que sí distingue mayúsculas/minúsculas.
+DimensionTemas[P3_GrupoTema_FIND] =
+    VAR TemaActual = DimensionTemas[Tema]
+    RETURN
+        SWITCH(
+            TRUE(),
+            FIND("Science", TemaActual, 1, 0) > 0
+                || FIND("Biology", TemaActual, 1, 0) > 0
+                || FIND("Chemistry", TemaActual, 1, 0) > 0
+                || FIND("Geology", TemaActual, 1, 0) > 0, "Ciencias",
+            FIND("Arabic", TemaActual, 1, 0) > 0
+                || FIND("English", TemaActual, 1, 0) > 0
+                || FIND("French", TemaActual, 1, 0) > 0
+                || FIND("Spanish", TemaActual, 1, 0) > 0, "Idiomas",
+            "Otros"
+        )
+
+-- REQ 6: reprobación operativa = categoría de rendimiento L.
+P3_Reprobados =
+    CALCULATE(
+        [P3_Total_Observaciones],
+        KEEPFILTERS(HechosObservaciones[CategoriaRendimiento] = "L")
+    )
+
+P3_Total_Observaciones =
+    COUNTROWS(HechosObservaciones)
+
+P3_Tasa_Reprobacion =
+    DIVIDE([P3_Reprobados], [P3_Total_Observaciones])
+
+-- Ranking denso por tasa descendente. Los temas empatados comparten rango.
+-- El filtro del visual por rango <= 10 puede mostrar más de 10 temas si hay
+-- empate en el corte; use el filtro Top N de la tasa para limitar a 10 temas.
+P3_Ranking_Reprobacion =
+    RANKX(
+        ALL(DimensionTemas[Tema]),
+        [P3_Tasa_Reprobacion],
+        ,
+        DESC,
+        DENSE
+    )
+
+-- REQ 7: tasa de clase L y actividad promedio por grupo de ausencias.
+P3_Tasa_Rendimiento_Bajo =
+    DIVIDE([P3_Reprobados], [P3_Total_Observaciones])
+
+P3_Promedio_Actividad =
+    AVERAGE(HechosObservaciones[P3_Actividad_Observacion])
+
+P3_Promedio_Mano_Levantada =
+    AVERAGE(HechosObservaciones[VecesManoLevantada])
+
+P3_Promedio_Recursos_Visitados =
+    AVERAGE(HechosObservaciones[RecursosVisitados])
+
+P3_Promedio_Anuncios_Vistos =
+    AVERAGE(HechosObservaciones[AnunciosVistos])
+
+P3_Promedio_Participacion_Discusion =
+    AVERAGE(HechosObservaciones[ParticipacionesDiscusion])
+
+-- Correlación de Pearson entre dos variables numéricas de actividad (0-100).
+P3_Correlacion_Mano_Recursos =
+    VAR Base =
+        FILTER(
+            HechosObservaciones,
+            NOT(ISBLANK(HechosObservaciones[VecesManoLevantada]))
+                && NOT(ISBLANK(HechosObservaciones[RecursosVisitados]))
+        )
+    VAR MediaX =
+        AVERAGEX(Base, HechosObservaciones[VecesManoLevantada])
+    VAR MediaY =
+        AVERAGEX(Base, HechosObservaciones[RecursosVisitados])
+    VAR SumaXY =
+        SUMX(
+            Base,
+            (HechosObservaciones[VecesManoLevantada] - MediaX)
+                * (HechosObservaciones[RecursosVisitados] - MediaY)
+        )
+    VAR SumaX2 =
+        SUMX(
+            Base,
+            POWER(HechosObservaciones[VecesManoLevantada] - MediaX, 2)
+        )
+    VAR SumaY2 =
+        SUMX(
+            Base,
+            POWER(HechosObservaciones[RecursosVisitados] - MediaY, 2)
+        )
+    RETURN
+        DIVIDE(SumaXY, SQRT(SumaX2 * SumaY2))
+
+-- Pearson con Class codificada L=1, M=2, H=3 y el índice de actividad.
+-- Interpretar solo como asociación ordinal exploratoria, no como correlación
+-- de dos magnitudes continuas ni como efecto causal.
+P3_Correlacion_Class_Actividad =
+    VAR Base =
+        FILTER(
+            HechosObservaciones,
+            NOT(ISBLANK(HechosObservaciones[P3_Codigo_Class]))
+                && NOT(ISBLANK(HechosObservaciones[P3_Actividad_Observacion]))
+        )
+    VAR MediaX =
+        AVERAGEX(Base, HechosObservaciones[P3_Codigo_Class])
+    VAR MediaY =
+        AVERAGEX(Base, HechosObservaciones[P3_Actividad_Observacion])
+    VAR SumaXY =
+        SUMX(
+            Base,
+            (HechosObservaciones[P3_Codigo_Class] - MediaX)
+                * (HechosObservaciones[P3_Actividad_Observacion] - MediaY)
+        )
+    VAR SumaX2 =
+        SUMX(
+            Base,
+            POWER(HechosObservaciones[P3_Codigo_Class] - MediaX, 2)
+        )
+    VAR SumaY2 =
+        SUMX(
+            Base,
+            POWER(HechosObservaciones[P3_Actividad_Observacion] - MediaY, 2)
+        )
+    RETURN
+        DIVIDE(SumaXY, SQRT(SumaX2 * SumaY2))
+
+-- REQ 8: Class = H define sobresaliente; el porcentaje usa el contexto actual.
+P3_Sobresalientes =
+    CALCULATE(
+        [P3_Total_Observaciones],
+        KEEPFILTERS(HechosObservaciones[CategoriaRendimiento] = "H")
+    )
+
+P3_Pct_Sobresalientes =
+    DIVIDE([P3_Sobresalientes], [P3_Total_Observaciones])
+
+-- Criterio adicional propuesto: H, Under-7 y promedio de las cuatro actividades
+-- >= 75/100 (umbral operativo, no percentil observado ni estándar institucional).
+P3_Sobresalientes_Destacados =
+    CALCULATE(
+        [P3_Total_Observaciones],
+        KEEPFILTERS(HechosObservaciones[CategoriaRendimiento] = "H"),
+        KEEPFILTERS(HechosObservaciones[CategoriaAusencias] = "Under-7"),
+        KEEPFILTERS(HechosObservaciones[P3_Actividad_Observacion] >= 75)
+    )
+
+P3_Pct_Sobresalientes_Destacados =
+    DIVIDE([P3_Sobresalientes_Destacados], [P3_Total_Observaciones])
+
+-- Ordena observaciones visibles por actividad; no identifica ni clasifica personas.
+-- En una tabla con IdObservacion, el rango respeta los segmentadores aplicados.
+P3_Ranking_Actividad =
+    IF(
+        ISINSCOPE(HechosObservaciones[IdObservacion]),
+        RANKX(
+            ALLSELECTED(HechosObservaciones[IdObservacion]),
+            [P3_Promedio_Actividad],
+            ,
+            DESC,
+            DENSE
+        )
+    )
