@@ -70,4 +70,4 @@ usa la definición neta por cohorte del boletín de 2010, no la metodología anu
 vigente de SPADIES.
 
 Más detalle sobre el modelo, las relaciones, los controles y los valores de
-comprobación está en [FUENTES_OFICIALES.md](powerbi/FUENTES_OFICIALES.md).
+comprobación está en [FUENTES_OFICIALES.md](powerbi/FUENTES_OFICIALES.md)..
