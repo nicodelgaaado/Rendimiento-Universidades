@@ -1,0 +1,62 @@
+{
+  "tables": {
+    "DimensionTemas": 12,
+    "DimensionSemestres": 2,
+    "DimensionAsignaturasOficiales": 1255,
+    "DimensionPeriodosNotas": 2,
+    "DimensionFacultadesOficiales": 5,
+    "DimensionCohortesDesercion": 2,
+    "DimensionFuentesOficiales": 3,
+    "HechosObservaciones": 480,
+    "HechosNotasOficiales": 1977,
+    "HechosDesercionOficial": 10
+  },
+  "checks": [
+    "All saved table values, duplicate multiplicities, column order and CSV hashes match; integrity and foreign keys pass",
+    "EDA view matches CSV; 63 published zeros retain NULL analysis grades",
+    "Actual SQL export replayed with PostgreSQL setup removed: all table and view rows match saved database",
+    "All 3 local source PDFs match stored provenance hashes"
+  ],
+  "postgresql_server_tested": false,
+  "grade_totals": [
+    [
+      "2015-2",
+      49607,
+      41499,
+      8108
+    ],
+    [
+      "2017-1",
+      49006,
+      41524,
+      7482
+    ]
+  ],
+  "dropout_totals": [
+    [
+      "2005-2",
+      1295,
+      653
+    ],
+    [
+      "2006-1",
+      1404,
+      586
+    ]
+  ],
+  "rejected_invalid_mutations": [
+    "duplicate primary key",
+    "orphan subject",
+    "invalid performance category",
+    "negative activity",
+    "grade outside scale",
+    "inconsistent grade counts",
+    "zero incorrectly used in analysis",
+    "inconsistent dropout counts",
+    "mismatched follow-up period",
+    "delete referenced dimension",
+    "missing required value"
+  ],
+  "database_sha256": "72b86114e72781d2fd530a0650b567a20185aa60ff1e6cd54e967caf486d5335",
+  "result": "PASS (local data and shared SQL); PostgreSQL server execution pending"
+}

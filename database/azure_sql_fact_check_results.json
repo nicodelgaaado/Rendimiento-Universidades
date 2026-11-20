@@ -1,0 +1,31 @@
+{
+  "tables": {
+    "DimensionTemas": 12,
+    "DimensionSemestres": 2,
+    "DimensionAsignaturasOficiales": 1255,
+    "DimensionPeriodosNotas": 2,
+    "DimensionFacultadesOficiales": 5,
+    "DimensionCohortesDesercion": 2,
+    "DimensionFuentesOficiales": 3,
+    "HechosObservaciones": 480,
+    "HechosNotasOficiales": 1977,
+    "HechosDesercionOficial": 10
+  },
+  "checks": [
+    "all fields and duplicate multiplicities match CSV",
+    "EDA view matches CSV",
+    "10 PKs and 9 FKs present",
+    "TDE active and connection encrypted",
+    "63 analysis nulls and published totals match"
+  ],
+  "metadata": {
+    "tables_count": 10,
+    "views_count": 1,
+    "primary_keys": 10,
+    "foreign_keys": 9,
+    "check_constraints": 46,
+    "encryption_state": 3,
+    "connection_encrypted": "TRUE"
+  },
+  "result": "PASS"
+}

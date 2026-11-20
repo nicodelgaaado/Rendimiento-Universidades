@@ -1,0 +1,52 @@
+{
+  "tables": {
+    "DimensionTemas": {
+      "rows": 12,
+      "sha256": "336c51256e864506ac3c078c53bfcea212e587d93b83075b422721e0c385924f"
+    },
+    "DimensionSemestres": {
+      "rows": 2,
+      "sha256": "f46f88ca80dac134c405144e2d23261c8e8f4c0c6aa4863311cd90ee2b18e8e9"
+    },
+    "DimensionAsignaturasOficiales": {
+      "rows": 1255,
+      "sha256": "a4393d856310ab1d748a235e23bd56b7fba2389aa33b720d63bc240241b23ff6"
+    },
+    "DimensionPeriodosNotas": {
+      "rows": 2,
+      "sha256": "79c5672059885d0bc8c0b9289dacdca71fc581ccab9349811852ee394931ab25"
+    },
+    "DimensionFacultadesOficiales": {
+      "rows": 5,
+      "sha256": "b0a4891be2072e934a496980f240866f1c6ce111ebc715f1a7833103830829ec"
+    },
+    "DimensionCohortesDesercion": {
+      "rows": 2,
+      "sha256": "4332ed6dca998a14eec3665a6bbd481983c67393c0cf6b46397322feb2067809"
+    },
+    "DimensionFuentesOficiales": {
+      "rows": 3,
+      "sha256": "7d2c97f51f516a684ea80149e02b4f5f458177c2819ad0536e0f7f86a7f5b651"
+    },
+    "HechosObservaciones": {
+      "rows": 480,
+      "sha256": "65a9fab086c7bd7186c95ec748d07995d261898b86a48835fea1b45fa55e547c"
+    },
+    "HechosNotasOficiales": {
+      "rows": 1977,
+      "sha256": "df276a537644c6ad39515ede0f9137c61e97a069f523a21a10ea0735f38d59ce"
+    },
+    "HechosDesercionOficial": {
+      "rows": 10,
+      "sha256": "93291ce0cfeb76c80ba67563e2afc848a0a125dedf107ac5515dc3f8cebe3d81"
+    }
+  },
+  "checks": [
+    "all source fields round-trip",
+    "primary and foreign keys",
+    "SQLite integrity",
+    "EDA view equals source CSV",
+    "official totals and 63 null analysis grades"
+  ],
+  "postgresql_execution_tested": false
+}

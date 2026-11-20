@@ -1,0 +1,7 @@
+# Runtime and environment-specific artifacts
+azure_sql_export.json
+*.building.sqlite3
+*.log
+*.cer
+*.pem
+pg_fact_check/
