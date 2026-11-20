@@ -133,6 +133,11 @@ máximo configurado es 32 GiB. PostgreSQL usa 32 GiB con crecimiento automático
 y retención de respaldo de siete días. PostgreSQL es un recurso de pago aunque
 Azure SQL permanezca dentro de su límite gratuito.
 
+### Evidencia de despliegue
+
+<img width="1920" height="823" alt="image" src="https://github.com/user-attachments/assets/3408a0ef-29a7-4663-bf59-515b97dfee53" />
+
+
 ### Seguridad
 
 - Los dos motores cloud usan autenticación exclusiva con Microsoft Entra ID;
