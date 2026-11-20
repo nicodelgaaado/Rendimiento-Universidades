@@ -80,6 +80,16 @@ validación, despliegue y consultas. La base SQLite se puede abrir directamente
 con DB Browser for SQLite; los archivos SQL permiten reproducir el mismo modelo
 relacional en la nube sin almacenar credenciales en el repositorio.
 
+### Descargar la base SQLite
+
+La base de datos completa se puede descargar desde GitHub y abrir localmente
+con [DB Browser for SQLite](https://sqlitebrowser.org/):
+
+[Descargar `rendimiento.sqlite3`](database/rendimiento.sqlite3?raw=1)
+
+Después de descargarla, abre DB Browser for SQLite, selecciona **Open Database**
+y usa la pestaña **Browse Data** para consultar las tablas y sus registros.
+
 ## Arquitectura cloud en Azure
 
 La solución se desplegó en el grupo de recursos

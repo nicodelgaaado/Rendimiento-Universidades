@@ -1,66 +1,75 @@
-# Database package
+# Paquete de bases de datos
 
-This directory contains portable, reproducible database versions of the project
-data. It supports local exploration with SQLite and cloud deployment to
-PostgreSQL or Azure SQL Database.
+Este directorio contiene versiones portables y reproducibles de los datos del
+proyecto. Permite explorar la información localmente con SQLite y desplegar el
+mismo modelo en PostgreSQL o Azure SQL Database.
 
-## Included artifacts
+## Artefactos incluidos
 
-| File | Purpose |
+| Archivo | Propósito |
 | --- | --- |
-| `rendimiento.sqlite3` | Populated SQLite database for DB Browser for SQLite. |
-| `postgresql.sql` | Transactional PostgreSQL schema and data import. |
-| `azure_sql.sql` | Transactional Azure SQL schema and data import. |
-| `build_database.py` | Rebuilds SQLite and PostgreSQL artifacts from `powerbi/data`. |
-| `build_azure_sql.py` | Rebuilds the Azure SQL import from `powerbi/data`. |
-| `fact_check.py` | Audits SQLite/PostgreSQL data, relationships and constraints. |
-| `verify_azure_sql.py` | Compares an Azure SQL export field by field with the CSV files. |
-| `invoke_azure_sql.ps1` | Executes a T-SQL file with a short-lived Microsoft Entra token. |
-| `export_azure_sql.ps1` | Exports Azure SQL data for independent verification. |
-| `azure_sql_constraint_probes.sql` | Tests eleven invalid mutations inside rolled-back transactions. |
-| `consultas_azure_sql.md` | Ready-to-use analysis queries with explanations. |
+| `rendimiento.sqlite3` | Base SQLite poblada para DB Browser for SQLite. |
+| `postgresql.sql` | Esquema e importación de datos transaccional para PostgreSQL. |
+| `azure_sql.sql` | Esquema e importación de datos transaccional para Azure SQL. |
+| `build_database.py` | Regenera SQLite y los artefactos PostgreSQL desde `powerbi/data`. |
+| `build_azure_sql.py` | Regenera la importación de Azure SQL desde `powerbi/data`. |
+| `fact_check.py` | Audita datos, relaciones y restricciones de SQLite/PostgreSQL. |
+| `verify_azure_sql.py` | Compara campo por campo una exportación de Azure SQL con los CSV. |
+| `invoke_azure_sql.ps1` | Ejecuta un archivo T-SQL con un token temporal de Microsoft Entra. |
+| `export_azure_sql.ps1` | Exporta los datos de Azure SQL para verificarlos independientemente. |
+| `azure_sql_constraint_probes.sql` | Prueba once mutaciones inválidas dentro de transacciones revertidas. |
+| `consultas_azure_sql.md` | Consultas de análisis listas para usar, con explicaciones. |
 
-Generated SQL files and the SQLite database contain only the public educational
-data already present in this repository. No passwords, access tokens, tenant
-identifiers, subscription identifiers, client IP addresses or private keys are
-stored here.
+Los archivos SQL generados y la base SQLite contienen únicamente los datos
+educativos públicos que ya están en el repositorio. Aquí no se almacenan
+contraseñas, tokens de acceso, identificadores de tenant o suscripción,
+direcciones IP de clientes ni claves privadas.
 
-## Rebuild locally
+## Descargar y explorar SQLite
 
-From the repository root:
+Descarga la base completa desde GitHub:
+
+[Descargar `rendimiento.sqlite3`](rendimiento.sqlite3?raw=1)
+
+Después, abre el archivo con [DB Browser for SQLite](https://sqlitebrowser.org/)
+y selecciona la pestaña **Browse Data** para visualizar las tablas y sus
+registros. También puedes ejecutar esta consulta desde **Execute SQL**:
+
+```sql
+SELECT * FROM HechosNotasOficiales LIMIT 100;
+```
+
+## Regeneración local
+
+Desde la raíz del repositorio:
 
 ```powershell
 python database/build_database.py
 python database/build_azure_sql.py
 ```
 
-Both builders use Python's standard library. `build_database.py` validates every
-field while loading SQLite, verifies foreign keys and integrity, reproduces the
-EDA view, and checks the published grade and dropout totals.
+Los dos generadores utilizan únicamente la biblioteca estándar de Python.
+`build_database.py` valida cada campo durante la carga de SQLite, comprueba la
+integridad y las claves foráneas, reproduce la vista EDA y verifica los totales
+publicados de notas y deserción.
 
-Open `database/rendimiento.sqlite3` in DB Browser for SQLite and choose
-**Browse Data**, or run:
+## Importación en PostgreSQL
 
-```sql
-SELECT * FROM HechosNotasOficiales LIMIT 100;
-```
-
-## PostgreSQL import
-
-Import into a new database or schema:
+Importa el modelo en una base o esquema nuevo:
 
 ```powershell
 psql -X --set=ON_ERROR_STOP=on --file=database/postgresql.sql
 psql -X --set=ON_ERROR_STOP=on --file=database/verify.sql
 ```
 
-The import creates schema `rendimiento` and does not contain `DROP` or `DELETE`
-statements. Use environment variables or a secret manager for credentials.
+La importación crea el esquema `rendimiento` y no contiene instrucciones `DROP`
+ni `DELETE`. Usa variables de entorno o un gestor de secretos para manejar las
+credenciales.
 
-## Azure SQL deployment and verification
+## Despliegue y verificación en Azure SQL
 
-Provision an Azure SQL Database with Microsoft Entra authentication and a
-firewall rule restricted to the deployment client. Then run:
+Aprovisiona Azure SQL Database con autenticación de Microsoft Entra y una regla
+de firewall restringida al cliente de despliegue. Después ejecuta:
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass `
@@ -70,7 +79,7 @@ powershell -NoProfile -ExecutionPolicy Bypass `
   -SqlFile database/azure_sql.sql
 ```
 
-Export and verify the remote data:
+Exporta y verifica los datos remotos:
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass `
@@ -82,23 +91,26 @@ powershell -NoProfile -ExecutionPolicy Bypass `
 python database/verify_azure_sql.py
 ```
 
-The scripts request short-lived tokens from Azure CLI and never persist them.
-The export file, certificates, logs and temporary PostgreSQL clusters are
-ignored. Use `azure_sql_diagnostic_*.json` as Azure Monitor diagnostic-settings
-payloads. Run `azure_sql_constraint_probes.sql` with `invoke_azure_sql.ps1` to
-confirm that keys, required values, ranges and cross-table relationships reject
-invalid data.
+Los scripts solicitan tokens de corta duración mediante Azure CLI y nunca los
+guardan. El archivo de exportación, los certificados, los registros y los
+clústeres temporales de PostgreSQL están ignorados por Git. Los archivos
+`azure_sql_diagnostic_*.json` sirven como cargas de configuración de diagnóstico
+para Azure Monitor. Ejecuta `azure_sql_constraint_probes.sql` mediante
+`invoke_azure_sql.ps1` para confirmar que las claves, los valores obligatorios,
+los rangos y las relaciones entre tablas rechazan datos inválidos.
 
-## Data model
+## Modelo de datos
 
-The package contains seven dimension tables, three fact tables and one EDA view:
+El paquete contiene siete tablas de dimensiones, tres tablas de hechos y una
+vista EDA:
 
-- `HechosObservaciones`: 480 xAPI observations.
-- `HechosNotasOficiales`: 1,977 official subject-period records.
-- `HechosDesercionOficial`: 10 faculty-cohort records.
-- `EDA_TemaSemestreRendimiento`: aggregate view over xAPI observations.
+- `HechosObservaciones`: 480 observaciones xAPI.
+- `HechosNotasOficiales`: 1.977 registros oficiales de asignatura-periodo.
+- `HechosDesercionOficial`: 10 registros de facultad-cohorte.
+- `EDA_TemaSemestreRendimiento`: vista agregada de las observaciones xAPI.
 
-The xAPI and official UNAL populations remain separate because they describe
-different populations and levels of detail. Observation IDs identify source
-rows, not students. The 63 zero grades remain preserved in the published field
-and are `NULL` in the analysis field.
+Las poblaciones xAPI y oficial de la UNAL permanecen separadas porque describen
+poblaciones y niveles de detalle diferentes. Los identificadores de observación
+representan filas de origen, no estudiantes. Las 63 notas publicadas como cero
+se conservan en el campo original y se representan como `NULL` en el campo de
+análisis.
